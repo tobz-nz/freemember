@@ -346,8 +346,8 @@ class Freemember
 
 		if ('PREVIOUS_URL' == $data['hidden_fields']['return_url'])
 		{
-			$data['hidden_fields']['return_url'] = isset($this->EE->session->tracker[1]) ?
-				$this->EE->session->tracker[1] : false;
+			$this->EE->load->helper('url');
+			$data['hidden_fields']['return_url'] = uri_string();
 		}
 
 		return $this->EE->functions->form_declaration($data).
@@ -364,11 +364,6 @@ class Freemember
 			if (($return_url = $this->EE->input->get_post('return_url')) != '')
 			{
 				$return_url = $this->EE->functions->create_url($return_url);
-			}
-			elseif (isset($this->EE->session->tracker[0]))
-			{
-				// back to previous page
-				$return_url = $this->EE->functions->create_url($this->EE->session->tracker[0]);
 			}
 			else
 			{
