@@ -216,6 +216,31 @@ class Freemember_lib
             return $errors;
         }
 
+        // upload avatar if it exists
+        if (isset($_FILES['avatar'])) {
+            $this->EE->load->library('upload');
+
+            // setup the uploader
+            $config = array(
+                'upload_path' => rtrim(config_item('avatar_path'), '/').'/uploads/',
+                'allowed_types' => 'gif|jpg|png',
+                'max_size' => config_item('avatar_max_height', 200),
+                'max_width'  => config_item('avatar_max_width', 500),
+                'max_height'  => config_item('avatar_max_kb', 500)
+            );
+            $this->EE->upload->initialize($config);
+
+            // attempt to save the uploaded file
+            if ($this->EE->upload->do_upload('avatar')) {
+                $data = $this->EE->upload->data();
+                $_POST['avatar_filename'] = 'uploads/'.$data['file_name'];
+            }
+            else {
+                // return errrs
+                return array('avatar' => trim($this->EE->upload->display_errors(' ',' ')));
+            }
+        }
+
         // update member_data
         $member_id = $this->EE->session->userdata('member_id');
         unset($_POST['group_id']);

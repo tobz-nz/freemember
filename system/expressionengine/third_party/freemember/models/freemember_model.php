@@ -167,6 +167,7 @@ class Freemember_model extends CI_Model
             'icq',
             'bio',
             'signature',
+            'avatar_filename',
         );
     }
 

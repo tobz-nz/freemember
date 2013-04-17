@@ -237,7 +237,7 @@ class Freemember
     /**
      * Add a field helper to tag_vars
      */
-    protected function _add_field($name, $type = 'text', $force_value = null)
+    protected function _add_field($name, $type = 'text', $force_value = null, $attributes = array())
     {
         if (null !== $force_value || 'password' == $type) {
             $value = $force_value;
@@ -261,11 +261,16 @@ class Freemember
             $checked = $value ? ' checked ' : '';
             $field = "<input type='hidden' name='$name' value='' />$field value='1' $checked";
             $this->tag_vars[0][$name.'_checked'] = $checked;
-        } else {
+        } elseif ($type != 'file') {
             $field .= " value='$value'";
         }
 
-        $this->tag_vars[0]["field:$name"] = $field." />";
+        // add custom attributes
+        foreach ($attributes as $key => $value) {
+            $field .= ' '.$key .'="'.$value.'"';
+        }
+
+        $this->tag_vars[0]["field:$name"] = trim($field)." />";
     }
 
     protected function _add_select_field($name, $options)
@@ -304,6 +309,9 @@ class Freemember
             $this->_add_field($field);
         }
 
+        // add the avatar_url value
+        $this->tag_vars[0]['avatar_url'] = config_item('avatar_url').$member->avatar_filename;
+
         // custom member fields
         foreach ($this->EE->freemember_model->member_custom_fields() as $field) {
             if ($member) {
@@ -327,6 +335,7 @@ class Freemember
         $this->_add_field('password_confirm', 'password');
         $this->_add_field('captcha', 'text', false);
         $this->_add_field('accept_terms', 'checkbox');
+        $this->_add_field('avatar', 'file', false, array('accept' => 'image/*'));
     }
 
     /**
@@ -347,6 +356,7 @@ class Freemember
     protected function _build_form($action, $extra_hidden = array())
     {
         $data = array();
+        $data['enctype'] = 'multi';
         $data['action'] = $this->EE->functions->create_url($this->EE->uri->uri_string);
 
         if ($this->EE->TMPL->fetch_param('secure_action') == 'yes') {
