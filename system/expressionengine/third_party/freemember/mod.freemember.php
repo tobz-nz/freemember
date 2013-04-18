@@ -310,7 +310,7 @@ class Freemember
         }
 
         // add the avatar_url value
-        $this->tag_vars[0]['avatar_url'] = config_item('avatar_url').$member->avatar_filename;
+        $this->tag_vars[0]['avatar_url'] = isset($member->avatar_filename) ? config_item('avatar_url').$member->avatar_filename : '';
 
         // custom member fields
         foreach ($this->EE->freemember_model->member_custom_fields() as $field) {
