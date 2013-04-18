@@ -217,7 +217,7 @@ class Freemember_lib
         }
 
         // upload avatar if it exists
-        if (isset($_FILES['avatar'])) {
+        if (isset($_FILES['avatar']) && isset($_FILES['avatar']['name']) && $_FILES['avatar']['name'] != '') {
             $this->EE->load->library('upload');
 
             // setup the uploader
